@@ -24,6 +24,8 @@ def toggle(field_name, name=''):
 
     _set_name(fn, name)
 
+    return fn
+
 def true_false(field_name, true_name='', false_name=''):
     """
         Returns two functions, one for setting field_name to true and one for false
