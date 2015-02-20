@@ -1,8 +1,15 @@
-def _set_name(fn, name):
-    fn.short_description = name
-    fn.__name__ = name
+from .exceptions import InvalidFunctionName
 
-def toggle(field_name, name=''):
+def _set_name(fn, name, description):
+    if not description:
+        description = name
+    fn.short_description = description
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+def toggle(field_name, name='', description=''):
     """
         Returns a function for setting field_name to the opposite of its current value
         If true_name is provided, it will be used as both Django admin's short_description
@@ -22,11 +29,11 @@ def toggle(field_name, name=''):
     if not name:
         name = 'Toggle {field}'.format(field=field_name)
 
-    _set_name(fn, name)
+    _set_name(fn, name, description)
 
     return fn
 
-def true_false(field_name, true_name='', false_name=''):
+def true_false(field_name, true_name='', true_description='', false_name='', false_description=''):
     """
         Returns two functions, one for setting field_name to true and one for false
         If true_name is provided, it will be used as both Django admin's short_description
@@ -58,12 +65,12 @@ def true_false(field_name, true_name='', false_name=''):
     if not true_name:
         true_name = 'Set as {field}'.format(field=field_name)
     # Django uses __name__ internally to differentiate between functions
-    _set_name(true_fn, true_name)
+    _set_name(true_fn, true_name, true_description)
 
     # Same as above for false function
     if not false_name:
         false_name = 'Set as non {field}'.format(field=field_name)
-    _set_name(false_fn, false_name)
+    _set_name(false_fn, false_name, false_description)
 
     # return the 2 functions
     return (true_fn, false_fn,)

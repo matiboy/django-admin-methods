@@ -1,6 +1,7 @@
 import html2text
+from .exceptions import InvalidFunctionName
 
-def short_text(field_name, length=200, name='', suffix='...', strip_html=False):
+def short_text(field_name, length=200, name='', description='', suffix='...', strip_html=False):
     """
         Returns a function that can be used as a field on a Django admin list view
         It shortens the text field, optionally stripping HTML first.
@@ -15,12 +16,18 @@ def short_text(field_name, length=200, name='', suffix='...', strip_html=False):
             return '{short_text}{suffix}'.format(short_text=text[:length], suffix=suffix)
         return text
 
-    if name:
-        fn.short_description = name
-    else:
-        fn.short_description = field_name
+    if not name:
+        name = field_name
 
+    if not description:
+        description = name
+    
+    fn.short_description = description
+    
     # Django uses this internally to differentiate between functions, so needs to follow name
-    fn.__name__ = fn.short_description
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
 
     return fn
