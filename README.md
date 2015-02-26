@@ -117,6 +117,10 @@ class PropertyAdmin(admin.ModelAdmin):
 
 ## Releases
 
+###0.1.4
+
+- Allow Unicode in short description
+
 ###0.1.3
 
 Changelog

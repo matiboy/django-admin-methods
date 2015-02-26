@@ -13,11 +13,14 @@ Use to quickly create Django admin items such as:
 
 The *actions* module provides methods to build [admin actions](https://docs.djangoproject.com/en/1.7/ref/contrib/admin/actions/) and should be used within a **admin.ModelAdmin** declaration
 
-#### true_false(field_name, true_name='', false_name='')
+#### true_false(field_name, true_name='', false_name='', true_description='', false_description='')
 
 Returns two functions, one to set the model's *field_name* as true, one as false.  
-If *true_name* is given it will be used as the *short_description* value on the "true" function (which will be shown in the admin actions list).  
-If no name is given, defaults to *"Set as [field_name]"* and *"Set as non-[field_name]"
+*true_name* is used as the function name (make sure it is unique for this AdminModel)
+If *true_description* is given it will be used as the *short_description* value on the "true" function (which will be shown in the admin actions list).  
+If no name is given, defaults to *"Set as [field_name]"* and *"Set as non [field_name]"
+
+**Note** *true_name* must be a string (not unicode). For translations, use *true_description* instead
 
 ##### Sample code
 
@@ -34,20 +37,24 @@ Results in the actions below which would set the selected items' *published* val
 
 ![admin actions](https://cloud.githubusercontent.com/assets/487758/6201646/5da29110-b4f0-11e4-9b28-645906e4d2e0.png)
 
-#### toggle(field_name, name='')
+#### toggle(field_name, name='', description='')
 Returns a function which sets the model's *field_name* as the opposite of its current value for each selected items.  
-If *name* is given it will be used as the *short_description* value on the function (which will be shown in the admin actions list).  
 If no name is given, defaults to *"Toggle [field_name]"*
+If *description* is given it will be used as the *short_description* value on the function (which will be shown in the admin actions list). Otherwise *name* is used
+
+**Note** *name* must be a string (not unicode). For translations, use *description* instead
 
 ### List
 
 The *list* module provides methods to create extra fields for use in the list view and should be used within a **admin.ModelAdmin** declaration
 
-#### short_text(field_name, length=200, name='', suffix='...', strip_html=False)
+#### short_text(field_name, length=200, name='', description='', suffix='...', strip_html=False)
 Returns a function to be used as a *list_display* entry.  
-If no name is given, *field_name* is used.  
+If no name is given, *field_name* is used. 
 You may change the suffix which will be appended to **shortened** text only.  
 Use *strip_html* to remove HTML tags **before** length calculation
+
+**Note** *name* must be a string (not unicode). For translations, use *description* instead
 
 ```python
 import admin_methods.list
@@ -75,13 +82,14 @@ Returns a function to be set on a model, which can then be used in the *fields* 
 
 #####Parameters
 
-| Parameter   | Default | Description                                                                                                                                                                                                                                |
-|-------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| field_name  |         | the model ImageField name                                                                                                                                                                                                                  |
-| name        | ''      | the name for the function. Will be set to the field_name if not provided. <br>**Note** Django needs a name to detect unique methods, but you can make sure that it does not get displayed on the page by setting description to False (default) |
-| width       | 100     | image width                                                                                                                                                                                                                                |
-| description | False   | set *name* as short_description (and hence show it on the page) or not                                                                                                                                                                     |
-| if_no_image | ''      | value to display if no image is found                                                                                                                                                                                                      |
+| Parameter        | Default | Description                                                                                                                                                                                                                                 |
+|------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| field_name       |         | the model ImageField name                                                                                                                                                                                                                   |
+| name             | ''      | the name for the function. Will be set to the field_name if not provided. **Note** Django needs a name to detect unique methods, but you can make sure that it does not get displayed on the page by setting description to False (default) |
+| width            | 100     | image width                                                                                                                                                                                                                                 |
+| description      | False   | display short description or not.                                                                                                                                                                                                           |
+| description_text | ''      | If description is set to true, use this value as short_description. If not provided (and description is True), *name* will be used                                                                                                          |
+| if_no_image      | ''      | value to display if no image is found                                                                                                                                                                                                       |
 
 ##### Sample code
 
@@ -108,6 +116,16 @@ class PropertyAdmin(admin.ModelAdmin):
 - Uses [html2text](https://github.com/aaronsw/html2text) for stripping html in *list.short_text*
 
 ## Releases
+
+###0.1.4
+
+- Allow Unicode in short description
+
+###0.1.3
+
+Changelog
+
+- Separated name and description in all methods. Allows to handle non-ascii translations
 
 ###0.1.2
 
