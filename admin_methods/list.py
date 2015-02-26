@@ -13,7 +13,7 @@ def short_text(field_name, length=200, name='', description='', suffix='...', st
         if strip_html:
             text = html2text.html2text(text)
         if text.__len__() > length:
-            return '{short_text}{suffix}'.format(short_text=text[:length], suffix=suffix)
+            return u'{short_text}{suffix}'.format(short_text=text[:length], suffix=suffix)
         return text
 
     if not name:
