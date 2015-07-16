@@ -21,9 +21,35 @@ def short_text(field_name, length=200, name='', description='', suffix='...', st
 
     if not description:
         description = name
-    
+
     fn.short_description = description
-    
+
+    # Django uses this internally to differentiate between functions, so needs to follow name
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+    return fn
+
+
+def count(field_name, name='', description=''):
+    """
+        Returns a function that can be used to count one-to-many and many-to-many relationship
+        on a Django admin list view.
+    """
+    def fn(self, instance):
+        count = getattr(instance, field_name).count()
+        return count
+
+    if not name:
+        name = "count_{}".format(field_name)
+
+    if not description:
+        description = 'No. of {}'.format(field_name)
+
+    fn.short_description = description
+
     # Django uses this internally to differentiate between functions, so needs to follow name
     try:
         fn.__name__ = str(name)
