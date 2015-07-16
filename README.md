@@ -15,9 +15,9 @@ The *actions* module provides methods to build [admin actions](https://docs.djan
 
 #### true_false(field_name, true_name='', false_name='', true_description='', false_description='')
 
-Returns two functions, one to set the model's *field_name* as true, one as false.  
+Returns two functions, one to set the model's *field_name* as true, one as false.
 *true_name* is used as the function name (make sure it is unique for this AdminModel)
-If *true_description* is given it will be used as the *short_description* value on the "true" function (which will be shown in the admin actions list).  
+If *true_description* is given it will be used as the *short_description* value on the "true" function (which will be shown in the admin actions list).
 If no name is given, defaults to *"Set as [field_name]"* and *"Set as non [field_name]"
 
 **Note** *true_name* must be a string (not unicode). For translations, use *true_description* instead
@@ -38,7 +38,7 @@ Results in the actions below which would set the selected items' *published* val
 ![admin actions](https://cloud.githubusercontent.com/assets/487758/6201646/5da29110-b4f0-11e4-9b28-645906e4d2e0.png)
 
 #### toggle(field_name, name='', description='')
-Returns a function which sets the model's *field_name* as the opposite of its current value for each selected items.  
+Returns a function which sets the model's *field_name* as the opposite of its current value for each selected items.
 If no name is given, defaults to *"Toggle [field_name]"*
 If *description* is given it will be used as the *short_description* value on the function (which will be shown in the admin actions list). Otherwise *name* is used
 
@@ -49,9 +49,9 @@ If *description* is given it will be used as the *short_description* value on th
 The *list* module provides methods to create extra fields for use in the list view and should be used within a **admin.ModelAdmin** declaration
 
 #### short_text(field_name, length=200, name='', description='', suffix='...', strip_html=False)
-Returns a function to be used as a *list_display* entry.  
-If no name is given, *field_name* is used. 
-You may change the suffix which will be appended to **shortened** text only.  
+Returns a function to be used as a *list_display* entry.
+If no name is given, *field_name* is used.
+You may change the suffix which will be appended to **shortened** text only.
 Use *strip_html* to remove HTML tags **before** length calculation
 
 **Note** *name* must be a string (not unicode). For translations, use *description* instead
@@ -72,6 +72,20 @@ Description will be shortened to 150 characters where necessary:
 
 into this
 ![stripped](https://cloud.githubusercontent.com/assets/487758/6201672/27c76794-b4f2-11e4-93d7-96a576285604.png)
+
+#### count(field_name, name='', description='')
+Returns a function that can be used to count one-to-many and many-to-many relationship on a Django admin list view.
+If no name is given, count_*field_name* is used.
+
+**Note** *name* must be a string (not unicode). For translations, use *description* instead
+
+```python
+import admin_methods.list
+
+class UnitGroupAdmin(admin.ModelAdmin):
+  list_display = ('Units',)
+  Units = admin_methods.list.count('units')
+```
 
 ### Model
 The *model* module provides methods to create extra fields for use in the add or change view and should be used within a **models.Model** declaration
@@ -116,6 +130,10 @@ class PropertyAdmin(admin.ModelAdmin):
 - Uses [html2text](https://github.com/aaronsw/html2text) for stripping html in *list.short_text*
 
 ## Releases
+
+###0.1.5
+
+- Added count in list module
 
 ###0.1.4
 
