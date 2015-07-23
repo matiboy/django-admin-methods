@@ -7,6 +7,12 @@ Use to quickly create Django admin items such as:
 - Shortened descpription (limit to *n* characters) for use in the admin list view
 - Image thumbnail in change view
 
+## Installation
+
+```
+pip install django-admin-methods
+```
+
 ## API
 
 ###Actions
