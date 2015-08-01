@@ -79,11 +79,24 @@ Description will be shortened to 150 characters where necessary:
 into this
 ![stripped](https://cloud.githubusercontent.com/assets/487758/6201672/27c76794-b4f2-11e4-93d7-96a576285604.png)
 
-#### count(field_name, name='', description='')
+#### count(field_name, name='', description='', format='{}', format_plural=None, format_none=None)
 Returns a function that can be used to count one-to-many and many-to-many relationship on a Django admin list view.  
 If no name is given, count_*field_name* is used.  
+Within the list, *format_none* is used for 0 items, *format* is used for 1 item and *format_plural* for more than 1 items. They all default to simply displaying the number of items.
+
+##### Parameters
+
+| Parameter     | Default | Description                                                                                                                                                                   |
+|---------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| field_name    |         | the model field name                                                                                                                                                          |
+| name          | ''      | the name for the function. Will be set to the count_{field_name} if not provided. **Note** *name* must be a string (not unicode). For translations, use *description* instead |
+| format        | {}      | within the list, *format* is used for 1 item                                                                                                                                  |
+| format_none   | format  | within the list, *format_none* is used for 0 items. If not provided, *format* is used                                                                                         |
+| format_plural | format  | within the list, *format_plural* is used for more than 1 items. If not provided, *format* is used                                                                             |  
 
 **Note** *name* must be a string (not unicode). For translations, use *description* instead
+
+##### Usage
 
 ```python
 import admin_methods.list
