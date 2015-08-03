@@ -102,9 +102,12 @@ Within the list, *format_none* is used for 0 items, *format* is used for 1 item 
 import admin_methods.list
 
 class UnitGroupAdmin(admin.ModelAdmin):
-  list_display = ('Units',)
-  Units = admin_methods.list.count('units')
+  unit_count = admin_methods.list.count('units', format='{} unit', format_plural='{} units', format_none='Nothing')
+  list_display = ('name', 'unit_count')
 ```
+
+**Result**
+![image thumb](https://cloud.githubusercontent.com/assets/487758/9029641/902c05ae-39c9-11e5-9bf3-4bdf977020a4.png)
 
 ### Model
 The *model* module provides methods to create extra fields for use in the add or change view and should be used within a **models.Model** declaration
