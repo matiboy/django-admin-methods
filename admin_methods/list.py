@@ -33,14 +33,26 @@ def short_text(field_name, length=200, name='', description='', suffix='...', st
     return fn
 
 
-def count(field_name, name='', description=''):
+def count(field_name, name='', description='', format='{}', format_plural=None, format_none=None):
     """
         Returns a function that can be used to count one-to-many and many-to-many relationship
         on a Django admin list view.
     """
     def fn(self, instance):
         count = getattr(instance, field_name).count()
-        return count
+
+        formatter = format_plural
+        if count == 0:
+            formatter = format_none
+        elif count == 1:
+            formatter = format
+
+        return formatter.format(count)
+
+    if format_none is None:
+        format_none = format
+    if format_plural is None:
+        format_plural = format
 
     if not name:
         name = "count_{}".format(field_name)
