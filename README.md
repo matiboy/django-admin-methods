@@ -153,6 +153,10 @@ class PropertyAdmin(admin.ModelAdmin):
 
 ## Releases
 
+###0.1.6
+
+- Added format parameter in count method
+
 ###0.1.5
 
 - Added count in list module
