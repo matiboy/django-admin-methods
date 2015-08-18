@@ -1,6 +1,7 @@
 import html2text
 import django.utils.html
-from .exceptions import InvalidFunctionName
+from .exceptions import InvalidFunctionName, ImproperlyConfigured
+import django.template.loader
 
 def short_text(field_name, length=200, name='', description='', suffix='...', strip_html=False):
     """
@@ -71,7 +72,7 @@ def count(field_name, name='', description='', format='{}', format_plural=None, 
 
     return fn
 
-def toggle(field_name, toggle_url_field, name='', description_true='', description_false=''):
+def toggle(field_name, url_field=None, name='', description_true='', description_false='', header_title=''):
     """
         Toggle a field
     """
@@ -81,23 +82,35 @@ def toggle(field_name, toggle_url_field, name='', description_true='', descripti
     if not description_false:
         description_false = field_name
 
+
     def fn(self, instance):
         current = getattr(instance, field_name)
-        url = getattr(instance, toggle_url_field)
-        if callable(url):
-            url = url()
-
         if current:
             description = description_true
         else:
             description = description_false
 
-        return django.utils.html.format_html('<a href="{}">{}</a>', url, description)
+        # If provided, assume url_field will be defined on instance, otherwise use default
+        field = url_field
+        if field is None:
+            field = '{}_url'.format(field_name)
+        # Try to get the url field
+        try:
+            url = getattr(instance, field)
+        except AttributeError:
+            raise ImproperlyConfigured('Model does not have attribute "{}".'.format(field))
+
+
+        return django.template.loader.render_to_string('admin_methods/list/toggle.html', {
+            'instance': instance,
+            'description': description,
+            'url': url
+            })
 
     if not name:
         name = "toggle_{}".format(field_name)
 
-    fn.short_description = 'Toggle {}'.format(field_name)
+    fn.short_description = header_title
 
     fn.allow_tags = True
 
