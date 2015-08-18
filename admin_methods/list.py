@@ -121,3 +121,46 @@ def toggle(field_name, url_field=None, name='', description_true='', description
         raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
 
     return fn
+
+def list(related_name, separator=', ', model_attribute=None, name='', description='', limit=None):
+    """
+        Returns a function that can be used to display a (comma separated) list of related items - via a foreign key
+        If model_attribute is not provided, __unicode__ will be used for each item. If it is a callable, will be called and its allow_tags flag will be used for the list flag
+    """
+    def fn(self, instance):
+        # Work on the items
+        items = getattr(instance, related_name).all()
+
+        # Limit them if provided
+        if limit is not None:
+            items = items[:limit]
+        # Either use model_attribute or __unicode__ otherwise
+        def model_display(x):
+            if model_attribute is None:
+                return x.__unicode__()
+            attr = getattr(x, model_attribute)
+            # Could be a method
+            if callable(attr):
+                fn.allow_tags = attr.allow_tags
+                return attr()
+            return attr
+
+        # Prepare the content
+        return separator.join([model_display(x) for x in items])
+
+    # Work on functions itself
+    if not name:
+        name = "list_{}".format(related_name)
+
+    if not description:
+        description = 'List of {}'.format(related_name)
+
+    fn.short_description = description
+
+    # Django uses this internally to differentiate between functions, so needs to follow name
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+    return fn
