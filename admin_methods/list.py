@@ -1,4 +1,5 @@
 import html2text
+import django.utils.html
 from .exceptions import InvalidFunctionName
 
 def short_text(field_name, length=200, name='', description='', suffix='...', strip_html=False):
@@ -61,6 +62,44 @@ def count(field_name, name='', description='', format='{}', format_plural=None, 
         description = 'No. of {}'.format(field_name)
 
     fn.short_description = description
+
+    # Django uses this internally to differentiate between functions, so needs to follow name
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+    return fn
+
+def toggle(field_name, toggle_url_field, name='', description_true='', description_false=''):
+    """
+        Toggle a field
+    """
+    if not description_true:
+        description_true = field_name
+
+    if not description_false:
+        description_false = field_name
+
+    def fn(self, instance):
+        current = getattr(instance, field_name)
+        url = getattr(instance, toggle_url_field)
+        if callable(url):
+            url = url()
+
+        if current:
+            description = description_true
+        else:
+            description = description_false
+
+        return django.utils.html.format_html('<a href="{}">{}</a>', url, description)
+
+    if not name:
+        name = "toggle_{}".format(field_name)
+
+    fn.short_description = 'Toggle {}'.format(field_name)
+
+    fn.allow_tags = True
 
     # Django uses this internally to differentiate between functions, so needs to follow name
     try:
