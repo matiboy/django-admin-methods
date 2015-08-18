@@ -72,7 +72,7 @@ def count(field_name, name='', description='', format='{}', format_plural=None, 
 
     return fn
 
-def toggle(field_name, url_field=None, name='', description_true='', description_false='', header_title=''):
+def toggle(field_name, url_field=None, name='', description_true='', description_false='', header_title='', template_path='admin_methods/list/toggle.html'):
     """
         Returns a function that can allow to toggle a field. This is meant to be an inline action
     """
@@ -101,7 +101,7 @@ def toggle(field_name, url_field=None, name='', description_true='', description
             raise ImproperlyConfigured('Model does not have attribute "{}".'.format(field))
 
 
-        return django.template.loader.render_to_string('admin_methods/list/toggle.html', {
+        return django.template.loader.render_to_string(template_path, {
             'instance': instance,
             'description': description,
             'url': url
