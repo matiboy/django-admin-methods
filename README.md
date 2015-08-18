@@ -1,6 +1,6 @@
-#Django admin methods
+# Django admin methods
 Easily create [admin actions](https://docs.djangoproject.com/en/1.7/ref/contrib/admin/actions/) methods, [list field methods](https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#django.contrib.admin.ModelAdmin.list_display) and [model methods](https://docs.djangoproject.com/en/1.7/ref/contrib/admin/#django.contrib.admin.ModelAdmin.fields) for Django ModelAdmin
-##Common usage
+## Common usage
 Use to quickly create Django admin items such as:
 
 - *"Set as published"*, *"Set as unpublished"* actions in the admin list view
@@ -15,7 +15,7 @@ pip install django-admin-methods
 
 ## API
 
-###Actions
+### Actions
 
 The *actions* module provides methods to build [admin actions](https://docs.djangoproject.com/en/1.7/ref/contrib/admin/actions/) and should be used within a **admin.ModelAdmin** declaration
 
@@ -109,6 +109,38 @@ class UnitGroupAdmin(admin.ModelAdmin):
 **Result**
 ![image thumb](https://cloud.githubusercontent.com/assets/487758/9029641/902c05ae-39c9-11e5-9bf3-4bdf977020a4.png)
 
+#### toggle(field_name, url_field=None, name='', description_true='', description_false='', header_title='')
+Returns a function that can be used to display a toggle for a single field in a Django admin list view.  
+If no *name* is given, toggle_*field_name* is used.  
+If no *url_field* is given, *field_name*_url is used.  
+When the boolean to be toggled is true, *description_true* will be used in display. This defaults to field_name.  
+When the boolean to be toggled is false, *description_false* will be used in display. This defaults to field_name.  
+
+##### Parameters
+
+| Parameter     | Default | Description                                                                                                                                                                   |
+|---------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| field_name    |         | the model field name                                                                                                                                                          |
+| name          | ''      | the name for the function. Will be set to the count_{field_name} if not provided. **Note** *name* must be a string (not unicode). For translations, use *description* instead |
+| format        | {}      | within the list, *format* is used for 1 item                                                                                                                                  |
+| format_none   | format  | within the list, *format_none* is used for 0 items. If not provided, *format* is used                                                                                         |
+| format_plural | format  | within the list, *format_plural* is used for more than 1 items. If not provided, *format* is used                                                                             |  
+
+**Note** *name* must be a string (not unicode). For translations, use *description* instead
+
+##### Usage
+
+```python
+import admin_methods.list
+
+class UnitGroupAdmin(admin.ModelAdmin):
+  unit_publish = admin_methods.list.toggle('published',)
+  list_display = ('name', 'unit_publish')
+```
+
+**Result**
+![image thumb](https://cloud.githubusercontent.com/assets/487758/9029641/902c05ae-39c9-11e5-9bf3-4bdf977020a4.png)
+
 ### Model
 The *model* module provides methods to create extra fields for use in the add or change view and should be used within a **models.Model** declaration
 
@@ -116,7 +148,7 @@ The *model* module provides methods to create extra fields for use in the add or
 
 Returns a function to be set on a model, which can then be used in the *fields* and *readonly_fields* declaration of a ModelAdmin
 
-#####Parameters
+##### Parameters
 
 | Parameter        | Default | Description                                                                                                                                                                                                                                 |
 |------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

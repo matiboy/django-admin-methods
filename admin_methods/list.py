@@ -74,7 +74,7 @@ def count(field_name, name='', description='', format='{}', format_plural=None, 
 
 def toggle(field_name, url_field=None, name='', description_true='', description_false='', header_title=''):
     """
-        Toggle a field
+        Returns a function that can allow to toggle a field. This is meant to be an inline action
     """
     if not description_true:
         description_true = field_name
