@@ -141,6 +141,46 @@ class UnitGroupAdmin(admin.ModelAdmin):
 **Result**
 ![image thumb](https://cloud.githubusercontent.com/assets/487758/9029641/902c05ae-39c9-11e5-9bf3-4bdf977020a4.png)
 
+#### list(related_name)
+
+Returns a function that can be used to display a comma separated list of items.  
+
+##### Parameters
+
+| Parameter       | Default | Description                                                                                                                                                                 |
+|-----------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| related_name    |         | the model's related query set name                                                                                                                                          |
+| name            | ''      | name for the function. Defaults to list_*related_name*                                                                                                                      |
+| separator       | ', '    | separator between the values                                                                                                                                                |
+| model_attribute | None    | for each model in the related queryset, call this method to get display value. If not provided, __unicode__() will be called. Refer to the notes below for more information |
+| description     | ''      | displayed description for the header. Defaults to "List of *related_name*                                                                                                   |
+| limit           | None    | Limit the number of results from the query set.                                                                                                                             |
+
+##### Notes
+
+- Related name is expected to be the name of the related queryset manager. `.all()` will be called on that property
+- If no *name* is given, list_*related_name* is used.
+- If no *model_attribute* is provided, the model's `__unicode__` method will be called.
+- If *model_attribute* is a callable, it will be called for each model. Also, the function returned by `list` will have the same value for `allow_tags` as the callable, meaning that you may display html inside each list item
+- If no *limit* is given, displays all the items
+- *name* must be a string (not unicode). For header value, use *description* instead  
+
+##### Usage
+
+```python
+
+import admin_methods.list
+
+class UnitAdmin(admin.ModelAdmin):
+    unit_tenant = admin_methods.list.list('tenants', model_attribute='name')
+
+    list_display = ('name', 'unit_tenant',)
+```
+
+**Result**  
+![image thumb](https://cloud.githubusercontent.com/assets/487758/9350541/566c4c30-4684-11e5-8437-bbab80f02277.png)
+
+
 #### toggle(field_name)
 
 **Important note**  
