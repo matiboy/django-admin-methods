@@ -95,8 +95,8 @@ Returns a function to be used as a *list_display* entry.
 import admin_methods.list
 
 class PropertyAdmin(admin.ModelAdmin):
-  list_display = ('short_description',)
-  short_description = admin_methods.list.short_text('description', length=150, strip_html=True)
+  list_display = ('shortened_text',)
+  shortened_text = admin_methods.list.short_text('description', length=150, strip_html=True)
 ```
 
 Description will be shortened to 150 characters where necessary:  
@@ -264,6 +264,13 @@ class PropertyAdmin(admin.ModelAdmin):
 - Uses [html2text](https://github.com/aaronsw/html2text) for stripping html in *list.short_text*
 
 ## Releases
+
+###0.1.7
+
+- [FEATURE] Added toggle in list
+- [FEATURE] Added comma separated values in list
+- [DOCUMENTATION] Changed example for short description to avoid confusion
+- Special thanks to [andybak](https://github.com/andybak) for his suggestions
 
 ###0.1.6
 
