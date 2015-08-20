@@ -164,3 +164,33 @@ def list(related_name, separator=', ', model_attribute=None, name='', descriptio
         raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
 
     return fn
+
+
+def group(fields, name='actions', description='Actions'):
+    """
+        Returns a function that allows to group other list fields together
+    """
+    def fn(self, instance):
+        # Work on the items
+        output = []
+        for field in fields:
+            print field
+            field = getattr(instance, field)
+            if callable(field):
+                if field.allow_tags:
+                    fn.allow_tags = True
+
+                output.append(field())
+
+            else:
+                output.append(field)
+
+        return ''.join(output)
+
+    # Django uses this internally to differentiate between functions, so needs to follow name
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+    return fn
