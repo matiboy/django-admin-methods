@@ -1,7 +1,8 @@
 from .exceptions import InvalidFunctionName
+import django.template.loader
 
 
-def image_thumb(field_name, name='', width=100, description=False, description_text='', if_no_image=''):
+def image_thumb(field_name, name='', width=100, description=False, description_text='', if_no_image='', template_path='admin_methods/model/image_thumb.html'):
     """ 
         Returns a function that can be used as a field on a Django admin list view
         It tries to use an ImageField's url and render it as an image of specified width (defaults to 100)
@@ -12,13 +13,20 @@ def image_thumb(field_name, name='', width=100, description=False, description_t
     def fn(self):
         try:
             image = getattr(self, field_name)
-            if isinstance(image, types.MethodType):
+            if callable(image):
                 url = image().url
             else:
                 url = image.url
-        except:
-            return if_no_image
-        return '<img src="{url}" width="{width}" />'.format(url=url, width=width)
+        except AttributeError:
+            args = {
+                'no_image': if_no_image,
+            }
+        else:
+            args = {
+                'url': url,
+                'width': width,
+            }
+        return django.template.loader.render_to_string(template_path, args)
     fn.allow_tags = True
 
     if not name:
