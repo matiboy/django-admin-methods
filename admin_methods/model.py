@@ -11,7 +11,11 @@ def image_thumb(field_name, name='', width=100, description=False, description_t
     # Self will be the model instance
     def fn(self):
         try:
-            url = getattr(self, field_name).url
+            image = getattr(self, field_name)
+            if isinstance(image, types.MethodType):
+                url = image().url
+            else:
+                url = image.url
         except:
             return if_no_image
         return '<img src="{url}" width="{width}" />'.format(url=url, width=width)

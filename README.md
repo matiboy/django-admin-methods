@@ -246,7 +246,7 @@ Returns a function to be set on a model, which can then be used in the *fields* 
 class Property(django.db.models.Model):
   top_image = django.db.models.ImageField(max_length=255, upload_to='properties/top')
   # Admin fields
-  top_image_preview = admin_actions.model.image_thumb('top_image')
+  top_image_preview = admin_methods.model.image_thumb('top_image')
 ```
 
 **admin.py**
