@@ -266,6 +266,11 @@ class PropertyAdmin(admin.ModelAdmin):
 
 ## Releases
 
+###0.1.13
+
+- [FEATURE] Added dot separated attribute
+- [FEATURE] Added template in image thumb. Thanks to [mbwk](https://github.com/mbwk)
+
 ###0.1.7
 
 - [FEATURE] Added toggle in list
