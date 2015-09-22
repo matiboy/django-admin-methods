@@ -164,3 +164,39 @@ def list(related_name, separator=', ', model_attribute=None, name='', descriptio
         raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
 
     return fn
+
+
+def attribute(dot_separated, name='', description=''):
+    """
+        Returns a function that can be used to display an attribute of an attribute etc
+        For each item, if it is a callable, will be called
+    """
+    def fn(self, instance):
+        # Work on the items
+        path = dot_separated.split('.')
+        item = instance
+        for p in path:
+            attr = getattr(item, p)
+            if callable(attr):
+                item = attr()
+            else:
+                item = attr
+
+        return item
+
+    # Work on functions itself
+    if not name:
+        name = "{}".format(dot_separated)
+
+    if not description:
+        description = 'Related'
+
+    fn.short_description = description
+
+    # Django uses this internally to differentiate between functions, so needs to follow name
+    try:
+        fn.__name__ = str(name)
+    except UnicodeEncodeError:
+        raise InvalidFunctionName('Name parameter is used as the function name. It must be a string (not unicode). For translations, use the description parameter instead')
+
+    return fn
